@@ -7,6 +7,7 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -14,12 +15,15 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
+import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
+import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 /**
  * Like the <em>get</em> goal, but it will also unpack the retrieved artifact.
  */
-@Mojo(name = "unpack", requiresProject = false)
+@Mojo(name = "unpack", requiresProject = false, defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true)
 public class UnpackMojo extends GetMojo {
 
 	@Component
@@ -38,7 +42,7 @@ public class UnpackMojo extends GetMojo {
 	private String includes;
 
 	/**
-	 * Output location
+	 * Output location.
 	 */
 	@Parameter(property = "outputDirectory", required = true)
 	private File outputDirectory;
@@ -69,6 +73,21 @@ public class UnpackMojo extends GetMojo {
 		}
 	}
 
+	private FileSelector[] getFileSelectors() {
+		if (StringUtils.isEmpty(excludes) && StringUtils.isEmpty(includes)) {
+			return new FileSelector[0];
+		}
+
+		IncludeExcludeFileSelector selector = new IncludeExcludeFileSelector();
+		if (StringUtils.isNotEmpty(excludes)) {
+			selector.setExcludes(excludes.split(","));
+		}
+		if (StringUtils.isNotEmpty(includes)) {
+			selector.setIncludes(includes.split(","));
+		}
+		return new FileSelector[] { selector };
+	}
+
 	private UnArchiver getUnArchiver(String aExtension, File aFile) throws NoSuchArchiverException {
 		UnArchiver unArchiver;
 
@@ -86,10 +105,7 @@ public class UnpackMojo extends GetMojo {
 		}
 
 		unArchiver.setIgnorePermissions(ignorePermissions);
-
-		// TODO: includes/excludes/mapper
-		// see:
-		// https://github.com/apache/maven-dependency-plugin/blob/master/src/main/java/org/apache/maven/plugins/dependency/AbstractDependencyMojo.java
+		unArchiver.setFileSelectors(getFileSelectors());
 
 		return unArchiver;
 	}

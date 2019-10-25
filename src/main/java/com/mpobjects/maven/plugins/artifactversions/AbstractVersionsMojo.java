@@ -64,7 +64,8 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 	private String classifier;
 
 	/**
-	 * Version qualifiers which should be excluded from the result
+	 * Comma separated version qualifiers which should be excluded from the result. Ignored if qualifiersExcluded is
+	 * used.
 	 */
 	@Parameter(property = "excludeQualifiers")
 	private String excludeQualifiers;
@@ -81,8 +82,10 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 	@Parameter(property = "packaging", defaultValue = "jar")
 	private String packaging = "jar";
 
+	@Parameter
 	private Set<String> qualifiersExcluded;
 
+	@Parameter
 	private Set<String> qualifiersRequired;
 
 	/**
@@ -93,10 +96,14 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 	private String remoteRepositories;
 
 	/**
-	 * Version qualifiers which are required in the result
+	 * Comma separated list of version qualifiers which are required in the result. Ignored if qualifiersRequired is
+	 * used.
 	 */
 	@Parameter(property = "requireQualifiers")
 	private String requireQualifiers;
+
+	@Parameter
+	private boolean skip;
 
 	/**
 	 * The version (range) to accept. Ignored if {@link #artifact} is used.
@@ -106,8 +113,17 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		qualifiersExcluded = new HashSet<>(Arrays.asList(StringUtils.split(Objects.toString(excludeQualifiers, ""), ",")));
-		qualifiersRequired = new HashSet<>(Arrays.asList(StringUtils.split(Objects.toString(requireQualifiers, ""), ",")));
+		if (skip) {
+			getLog().info("Skipping plugin execution");
+			return;
+		}
+
+		if (qualifiersExcluded == null) {
+			qualifiersExcluded = new HashSet<>(Arrays.asList(StringUtils.split(Objects.toString(excludeQualifiers, ""), ",")));
+		}
+		if (qualifiersRequired == null) {
+			qualifiersRequired = new HashSet<>(Arrays.asList(StringUtils.split(Objects.toString(requireQualifiers, ""), ",")));
+		}
 
 		try {
 			VersionRangeRequest request = createVersionRangeRequest(createArtifact());

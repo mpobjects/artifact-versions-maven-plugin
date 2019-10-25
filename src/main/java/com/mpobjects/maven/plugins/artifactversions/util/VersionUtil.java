@@ -15,7 +15,7 @@ public final class VersionUtil {
 	/**
 	 * Based on GenericVersion.Tokenizer.
 	 */
-	private static class Tokenizer {
+	private final static class Tokenizer {
 
 		private int index;
 

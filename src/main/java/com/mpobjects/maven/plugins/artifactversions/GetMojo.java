@@ -9,6 +9,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -19,8 +20,14 @@ import org.eclipse.aether.version.Version;
  * Get a specific version of the artifact. By default the latest version is retrieved. With the offset parameter an
  * older version can be retrieved.
  */
-@Mojo(name = "get", requiresProject = false)
+@Mojo(name = "get", requiresProject = false, threadSafe = true)
 public class GetMojo extends AbstractVersionsMojo {
+
+	/**
+	 * This property will receive the resolved artifact coordinate. Only used when executed from a project.
+	 */
+	@Parameter(property = "artifactProperty")
+	private String artifactProperty;
 
 	/**
 	 * Version offset to get. The latest selected version is at offset 0, the second latest is 1, etc.
@@ -45,9 +52,14 @@ public class GetMojo extends AbstractVersionsMojo {
 		ArtifactRequest request = new ArtifactRequest(getArtifact, getRemoteRepositories(), "");
 		ArtifactResult result;
 		try {
+			getLog().info("Resolving " + getArtifact);
 			result = repositorySystem.resolveArtifact(session.getRepositorySession(), request);
 		} catch (ArtifactResolutionException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
+		}
+
+		if (StringUtils.isNotEmpty(artifactProperty) && session.getCurrentProject() != null) {
+			session.getCurrentProject().getProperties().setProperty(artifactProperty, result.getArtifact().toString());
 		}
 
 		processArtifactResult(result);
