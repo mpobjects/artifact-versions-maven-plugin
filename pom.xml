@@ -3,6 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.mpobjects</groupId>
+		<artifactId>mpo-oss-parent</artifactId>
+		<version>1.1.0</version>
+	</parent>
+
 	<groupId>com.mpobjects.maven</groupId>
 	<artifactId>artifact-versions-maven-plugin</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -32,6 +38,23 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/mpobjects/artifact-versions-maven-plugin.git</connection>
+		<developerConnection>scm:git:https://github.com/mpobjects/artifact-versions-maven-plugin.git</developerConnection>
+		<url>https://github.com/mpobjects/artifact-versions-maven-plugin.git</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<ciManagement>
+		<system>TravisCI</system>
+		<url>https://travis-ci.org/mpobjects/artifact-versions-maven-plugin</url>
+	</ciManagement>
+
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/mpobjects/artifact-versions-maven-plugin/issues</url>
+	</issueManagement>
 
 	<prerequisites>
 		<maven>${maven.version}</maven>
@@ -105,6 +128,10 @@
 					<artifactId>maven-invoker-plugin</artifactId>
 					<version>3.1.0</version>
 				</plugin>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -112,7 +139,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
 				<configuration>
-					<!-- <goalPrefix>maven-archetype-plugin</goalPrefix> -->
 					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
 				</configuration>
 				<executions>
@@ -130,7 +156,7 @@
 					</execution>
 				</executions>
 			</plugin>
-						<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
@@ -144,6 +170,18 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<configuration>
+					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<profiles>
 		<profile>
@@ -184,9 +222,4 @@
 			</build>
 		</profile>
 	</profiles>
-	<parent>
-		<groupId>com.mpobjects</groupId>
-		<artifactId>mpo-oss-parent</artifactId>
-		<version>1.1.0</version>
-	</parent>
 </project>

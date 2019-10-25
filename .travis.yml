@@ -1,5 +1,5 @@
 language: java
-jdk: openjdk8
+jdk: openjdk7
 branches:
   only:
   - master
@@ -7,6 +7,7 @@ cache:
   directories:
   - "$HOME/.m2"
 install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dgpg.skip
+script: mvn integration-test site -B -V -Dgpg.skip -Prun-its
 after_success:
 - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/pubring.gpg.enc
   -out $GPG_DIR/pubring.gpg -d
@@ -20,3 +21,10 @@ env:
   - secure: kbI6JZl2P2zFAfGNAVaHdzS5vAABNqiRQTS7UT7Dj/QvMGlf/qdDOrLNjavcfyEsohnjm2EdUE8ILQM+MHLesDpcDZQx5gZwr7WZzilAO9nJKrpZzDG62d5FF8zyvTsu0rbLnugDOobpcw21P2/dPf6C8ShaZ5TJzQLWlHKj/KwP/4zs0u+CIDUrctf9qcKDz5x1PZ40J2DU1L47T148u8E+9kNJZrpgTpuwhNpd0x/xZChrJaJtWQxFB7LEwbN4zQF9qmw0QEd6lvz/+wJYBIl9pR9c8oQoYrXnBqnC3Wq3ZED4cBuNQ21HGXdWX1vU37qdSjuBofmTRnL8PNF1a5SsNe3Hw91VG1iAoR1g/PQIeLSuY3SWwcPIM2Xt3kGm4/or23xIbHF5eADIq5YxobOm30cyno9iLfshA96Y7lGZctnZgrMPE3W3C21cWpjldMKL1i9ahkbA+htBuM6Hj7npT2PuIjAieDg8x+4LDP0/En0uQJtYvUflHQ7xk+ybIKL/71U6S2yxGFD8YFiemso7YTxKxlBFJS0cvI+Z02TAERwyZqfCj8lksEzSkZGR2+7gCNyRbmn3PI85/ZR5KuXqAnfbo5OwJwpkilPvnuCDxO76sM31nsdI/PMlubKt3yY+v10ic0nluW1l9s7ZedvN4XEOrOirm2k0WWvN7Hk=
   - secure: oPK0EG8hpdL2q4/MSG4NHw76FVWKGtRjgiP996M0tOFaWYj1szggz6snpi9iiBYEEj812AK6ONhzLyDHTTX4K5QFJJese7soKEq1634PqpPM52h6fkhEVovxbX0K1Q3CgOcbZnOuNP+EuhUMDGeGV2e8DfUPDPdTuuq8yNEygBBrQ5OoJPXsiGlgdh38po7Sqxd9zM1XkMleCwMJ8wDv/EKbWf74odL5HSbf6pnH1MnopG1W8srA8nvhlZX8b+9GVGuIf/Zoz67MZRD8SHX0ssLX7nO2un9ZAzGfRSzZ9F78Ea2Al2s/NIISsXfh8e0BJK2jYmvFh6Slv5Mkuz0+ufnxOhDLEv/Yq2CMAqfUtjv6XsjfV+kzt/Gr3O8ZhPgCAKK/nVR0OjytMyxjI0ps8lY2RUx//q8WzIaPtaG8Q6Fk27AKk2tj0n+FIjSFHyq+I5DECzc/Gtc558kmbnzx0DXIXeCpd8lYvxTouDMeIUzjIW0ZFeu1hlwdj9alqKyc0kIVjZ9t4wlchggG3FYDtvQsDykJ0nnMyxLynYNVlDMcK4yP+L5MbTG3pT2Hnr6RdpvY0V6z+JGKHegGtHhEZhZSB8erD0NyChV9AuiYPVjwnCs2X1kCsOxfS+BDHbWpLV77VwppIw/JCLs2pzYSZQnZmw7rXlqEJRwTo/hK/R0=
   - secure: qKtlmm/oaI998L/grQRgtCZ62i9jZlUvpOu07eYmSv6aRbdcgcH77Fv4DZQvWzpjfPAE3VrrupWtmXUenYUkn+W/ArPhedsHZdjU5B3Q3GZ7y5xpHmt8qftDOEMKiIbnlc5akAsDuMh+VqbHSA4VMmL0BYEwmXVg9m5C+yDeND/tt/25xXFiqqRRJSDtt6u2MQJ30yi5cjetLi7mFEDnCDQFViFHuAQu3nAUxNwAy4gKEBt6t+gLh6debnuD3kIXgLwqkHtIPQ+ib3S+YC8BHztGh/WgF1j5EFSqsSVn+IK03adw02iU577YsWhSIZTRiwDNj2wPDTyVuJL+dIFUVr74yrosPzyIhjVVamBCcyETOVMvhmTRKUMqzl2+9SmW08HSoQ1zYLmK7i55G1xeCGlSJQl+NCMexgh959CLJ6kenbqJ7VbvNNbjr7luJ0A2/LMtZ2aNWDREkiO63pstCY2S9I0q0tyhKhmSbawRUp2dM72HonOV3JUYqOWEdvkKgZPLitUIIP/HFsCfySsmg8Nww8Mkm6/AnhjJnXNWF4TrfAAMoiVoLyfQz0c2gVfIVp6cesfgX+5I1P3EgKatnZCG7SKW99SDtTOwDalzn5YwdtmJhmZKX2geFEFGhyY/116JG4P7uhZxZpAmATFUw4lxyUhYhZaPJEn0ySBBYo0=
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  local-dir: target/site
+  on:
+    branch: master
