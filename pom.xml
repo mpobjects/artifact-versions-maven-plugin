@@ -14,7 +14,8 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	<name>Artifacts Version Maven Plugin</name>
-	<url>http://www.example.com</url>
+	<url>https://github.com/mpobjects/artifact-versions-maven-plugin</url>
+	<description>Maven plugin to download dynamic artifact versions from Maven repositories.</description>
 	<inceptionYear>2019</inceptionYear>
 
 	<organization>
@@ -222,4 +223,5 @@
 			</build>
 		</profile>
 	</profiles>
+
 </project>
