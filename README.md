@@ -8,3 +8,5 @@
 
 Maven plugin to download dynamic artifact versions from Maven repositories. 
 This plugin provides a `dependency:get` and `dependency:unpack` variant where the version number is not known beforehand.
+
+For more information see the [plugin documentation](https://mpobjects.github.io/artifact-versions-maven-plugin/).
