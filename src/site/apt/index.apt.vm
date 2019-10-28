@@ -1,0 +1,38 @@
+ ------
+ Introduction
+ ------
+ Michiel Hendriks
+ ------
+ 2019-10-28
+ ------
+
+${project.name}
+ 
+  Provides various tasks to retrieve artifacts without knowing an explicit version. Most goals are counterparts of tasks
+  provided by the dependency plug-in, with the major difference that the version of the artifact is a version range 
+  instead of an explicit version.
+  
+  The goals are designed to be able to work without a Maven project.
+ 
+* Goals Overview
+ 
+  General information about the goals.
+ 
+  * {{{./list-mojo.html}artifact-version:list}} List the versions.
+  
+  * {{{./get-mojo.html}artifact-version:get}} Download a artifact.
+  
+  * {{{./copy-mojo.html}artifact-version:copy}} Copy the artifact to a defined location.
+  
+  * {{{./unpack-mojo.html}artifact-version:unpack}} Unpack the artifact to a defined location. 
+ 
+* Usage
+ 
+  General instructions on how to use the Dependency Lock Plugin can be found on the {{{./usage.html}usage page}}. 
+ 
+  If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
+  {{{./issue-management.html}issue management system}}. When creating a new issue, please provide a comprehensive description of your
+  concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
+  entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
+  Of course, patches are welcome, too. Contributors can check out the project from our
+  {{{./scm.html}source repository}}. 

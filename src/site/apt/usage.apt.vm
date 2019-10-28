@@ -1,0 +1,39 @@
+ ------
+ Usage
+ ------
+ Michiel Hendriks
+ ------
+ 2019-10-28
+ ------
+
+Usage
+
+  Unpack the dependency to a specific location.
+
++-----
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+      	<groupId>com.mpobjects.maven</groupId>
+        <artifactId>artifact-versions-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>unpack-artifact</id>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifact>com.example:artifact:[2.0,3)</artifact>
+              <destinationDirectory>/tmp/example</destinationDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++-----
