@@ -127,6 +127,7 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 
 		try {
 			VersionRangeRequest request = createVersionRangeRequest(createArtifact());
+			getLog().info("Resolving " + request.getArtifact());
 			VersionRangeResult response = repositorySystem.resolveVersionRange(session.getRepositorySession(), request);
 			processVersionRangeResponse(response);
 		} catch (VersionRangeResolutionException e) {
@@ -157,6 +158,14 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 
 	protected List<RemoteRepository> getRemoteRepositories() throws MojoFailureException {
 		List<RemoteRepository> repos = new ArrayList<>();
+
+		// Include optional project repos
+		if (session.getCurrentProject() != null) {
+			for (org.apache.maven.model.Repository repo : session.getCurrentProject().getRepositories()) {
+				repos.add(toRemoteRepository(repo));
+			}
+		}
+
 		// Include standard repos
 		List<String> activeProfiles = session.getSettings().getActiveProfiles();
 		for (Profile profile : session.getSettings().getProfiles()) {
@@ -167,10 +176,15 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 				repos.add(toRemoteRepository(repo));
 			}
 		}
+
 		repos = repositorySystem.newResolutionRepositories(session.getRepositorySession(), repos);
 
 		// Add additional repos
-		repos.addAll(repositorySystem.newResolutionRepositories(session.getRepositorySession(), parseRemoteRepositories()));
+		for (RemoteRepository repo : repositorySystem.newResolutionRepositories(session.getRepositorySession(), parseRemoteRepositories())) {
+			RemoteRepository.Builder builder = new RemoteRepository.Builder(repo);
+			builder.setId(String.format("%s-%x", repo.getId(), System.identityHashCode(repo)));
+			repos.add(builder.build());
+		}
 		return repos;
 	}
 
@@ -238,11 +252,36 @@ public abstract class AbstractVersionsMojo extends AbstractMojo {
 		}
 	}
 
+	private RemoteRepository toRemoteRepository(org.apache.maven.model.Repository aRepo) {
+		RemoteRepository.Builder builder = new RemoteRepository.Builder(aRepo.getId(), aRepo.getLayout(), aRepo.getUrl());
+		builder.setReleasePolicy(toRepositoryPolicy(aRepo.getReleases()));
+		builder.setSnapshotPolicy(toRepositoryPolicy(aRepo.getSnapshots()));
+		return builder.build();
+	}
+
 	private RemoteRepository toRemoteRepository(Repository aRepo) {
 		RemoteRepository.Builder builder = new RemoteRepository.Builder(aRepo.getId(), aRepo.getLayout(), aRepo.getUrl());
 		builder.setReleasePolicy(toRepositoryPolicy(aRepo.getReleases()));
 		builder.setSnapshotPolicy(toRepositoryPolicy(aRepo.getSnapshots()));
 		return builder.build();
+	}
+
+	private RepositoryPolicy toRepositoryPolicy(org.apache.maven.model.RepositoryPolicy aPolicy) {
+		boolean enabled = true;
+		String checksums = RepositoryPolicy.CHECKSUM_POLICY_WARN;
+		String updates = RepositoryPolicy.UPDATE_POLICY_DAILY;
+
+		if (aPolicy != null) {
+			enabled = aPolicy.isEnabled();
+			if (aPolicy.getUpdatePolicy() != null) {
+				updates = aPolicy.getUpdatePolicy();
+			}
+			if (aPolicy.getChecksumPolicy() != null) {
+				checksums = aPolicy.getChecksumPolicy();
+			}
+		}
+
+		return new RepositoryPolicy(enabled, updates, checksums);
 	}
 
 	private RepositoryPolicy toRepositoryPolicy(org.apache.maven.settings.RepositoryPolicy aPolicy) {
